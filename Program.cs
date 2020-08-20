@@ -13,9 +13,21 @@ namespace DinosaurZoo
         public DateTime whenAcquired { get; set; } = new DateTime();
         public int weight { get; set; }
         public int enclosureNumber { get; set; }
+        public string Description()
+        {
+            var description = $"{name} is a {species}, which is a {dietType}. It was acquired {whenAcquired}, weighs {weight} lbs, and is located in enclosure {enclosureNumber}. ";
+            return description;
+        }
     }
     class Program
     {
+        static Dinosaurs PromptandFind(List<Dinosaurs> dinoToSearchWithin)
+        {
+            Console.Write("Name: ");
+            var dinoName = Console.ReadLine();
+            var foundDino = dinoToSearchWithin.FirstOrDefault(dinosaurs => dinosaurs.name == dinoName);
+            return foundDino;
+        }
         static void Main(string[] args)
         {
             var dinosaurs = new List<Dinosaurs>();
@@ -24,7 +36,7 @@ namespace DinosaurZoo
                 {
                     name = "Littlefoot",
                     species = "Apatosaurus",
-                    dietType = "herbivore",
+                    dietType = "Herbivore",
                     whenAcquired = DateTime.Now.AddMonths(-3),
                     weight = 38000,
                     enclosureNumber = 1,
@@ -34,7 +46,7 @@ namespace DinosaurZoo
                 {
                     name = "Cera",
                     species = "Triceratops",
-                    dietType = "herbivore",
+                    dietType = "Herbivore",
                     whenAcquired = DateTime.Now.AddMonths(-2),
                     weight = 20000,
                     enclosureNumber = 2,
@@ -44,7 +56,7 @@ namespace DinosaurZoo
                 {
                     name = "Chomper",
                     species = "Tyrannosaurus Rex",
-                    dietType = "carnivore",
+                    dietType = "Carnivore",
                     whenAcquired = DateTime.Now.AddMonths(-1),
                     weight = 29000,
                     enclosureNumber = 3
@@ -77,7 +89,7 @@ namespace DinosaurZoo
                     var dinosaursInOrder = dinosaurs.OrderBy(dinosaurs => dinosaurs.whenAcquired);
                     foreach (var dino in dinosaursInOrder)
                     {
-                        Console.WriteLine($"{dino.name} is a {dino.species}, which is a {dino.dietType}. It was acquired {dino.whenAcquired}, weighs {dino.weight} lbs, and is located in enclosure {dino.enclosureNumber}. "); ;
+                        Console.WriteLine(dino.Description());
                     }
                 }
 
@@ -87,7 +99,7 @@ namespace DinosaurZoo
                     var name = Console.ReadLine();
                     Console.Write("What is it's species?: ");
                     var species = Console.ReadLine();
-                    Console.Write("What is it's diet type?: ");
+                    Console.Write("What is it's diet type? Herbivore or Carnivore?: ");
                     var diet = Console.ReadLine();
                     Console.Write("How much does it weigh?: ");
                     var weight = int.Parse(Console.ReadLine());
@@ -112,13 +124,11 @@ namespace DinosaurZoo
 
                 if (choice == "Remove")
                 {
-                    Console.Write("Name: ");
-                    var dinoNameToSearchFor = Console.ReadLine();
-                    var foundDino = dinosaurs.FirstOrDefault(dinosaurs => dinosaurs.name == dinoNameToSearchFor);
+                    var foundDino = PromptandFind(dinosaurs);
                     if (foundDino != null)
                     {
-                        Console.WriteLine($"{foundDino.name} is a {foundDino.species}, which is a {foundDino.dietType}. It was acquired {foundDino.whenAcquired}, weighs {foundDino.weight} lbs, and is located in enclosure {foundDino.enclosureNumber}. "); ;
-                        Console.Write("Are you sure you want to remove this dinosaur?: ");
+                        Console.WriteLine(foundDino.Description());
+                        Console.Write("Are you sure you want to remove this dinosaur? Yes or No: ");
                         var answer = Console.ReadLine();
                         if (answer == "Yes")
                         {
@@ -128,7 +138,7 @@ namespace DinosaurZoo
                     }
                     else
                     {
-                        Console.WriteLine($"No dinosaur found with the name {dinoNameToSearchFor}.");
+                        Console.WriteLine($"No dinosaur found with that name.");
                     }
 
 
@@ -137,21 +147,31 @@ namespace DinosaurZoo
 
                 if (choice == "Transfer")
                 {
-                    Console.Write("What dinosaur would you like to transfer?: ");
-                    var dinoNameToTransfer = Console.ReadLine();
-                    var foundDinoToTransfer = dinosaurs.FindIndex(dinosaurs => dinosaurs.name == dinoNameToTransfer);
-                    Console.Write($"What enclosure would you like to transfer it to?:  ");
-                    var enclosureToTransferTo = int.Parse(Console.ReadLine());
-                    dinosaurs[foundDinoToTransfer].enclosureNumber = enclosureToTransferTo;
-
-
-
+                    {
+                        var foundDino = PromptandFind(dinosaurs);
+                        if (foundDino != null)
+                        {
+                            Console.WriteLine(foundDino.Description());
+                            Console.Write("Are you sure you want to remove this dinosaur? Yes or No : ");
+                            var answer = Console.ReadLine();
+                            if (answer == "Yes")
+                            {
+                                Console.Write("New enclosure: ");
+                                var newEnclosureNumber = int.Parse(Console.ReadLine());
+                                foundDino.enclosureNumber = newEnclosureNumber;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No dinosaur found with that name.");
+                        }
+                    }
                 }
 
                 if (choice == "Summary")
                 {
-                    int herbDinos = dinosaurs.Where(dinosaur => dinosaur.dietType == "herbivore").Count();
-                    int carnDinos = dinosaurs.Where(dinosaurs => dinosaurs.dietType == "carnivore").Count();
+                    int herbDinos = dinosaurs.Count(dinosaurs => dinosaurs.dietType == "Herbivore");
+                    int carnDinos = dinosaurs.Count(dinosaurs => dinosaurs.dietType == "Carnivore");
                     Console.WriteLine($"There are currently {herbDinos} herbivore(s) and {carnDinos} carnivore(s) at the zoo.");
                 }
 
@@ -165,4 +185,3 @@ namespace DinosaurZoo
         }
     }
 }
-
